@@ -1,4 +1,4 @@
-import kotlin.test.*
+import kotlin.test.Test
 
 internal class Test1 {
 
