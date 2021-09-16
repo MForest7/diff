@@ -1,6 +1,5 @@
 import java.io.File
 import java.nio.charset.Charset
-import java.util.*
 import kotlin.collections.ArrayList
 
 fun readStringsFromFile(fileName: String): Array<String> = File(fileName).readLines(Charset.defaultCharset()).toTypedArray()
@@ -12,60 +11,95 @@ fun printFile(fileName: String = readLine()!!) {
     }
 }
 
-fun buildEqualsMatrix(old: Array<String>, new: Array<String>): Array<Array<Boolean>> {
-    val equalsMatrix: Array<Array<Boolean>> = Array(old.size) { Array(new.size) {false} }
-    for (i in old.indices) {
-        for (j in new.indices)
-            equalsMatrix[i][j] = (old[i] == new[j])
-    }
-    return equalsMatrix
-}
-
 enum class From {
     Old, New, Common, Undefined
 }
 
-data class DiffLine (val file: From, val content: String, val index: Int)
+data class DPLink(val file: From, val length: Int)
 
-fun lcsDP(old: Array<String>, new: Array<String>): Array<Array<From>> {
-    val equals = buildEqualsMatrix(old, new)
-
-    val lcs: Array<Array<Int>> = Array(old.size + 1) { Array(new.size + 1) {0} }
-    val lineFrom: Array<Array<From>> = Array(old.size + 1) { Array(new.size + 1) {From.Undefined} }
+fun lcsDP(old: Array<String>, new: Array<String>): Array<Array<DPLink>> {
+    val lcs: Array<Array<DPLink>> = Array(old.size + 1) { Array(new.size + 1) {DPLink(From.Undefined, 0)} }
 
     for (i in old.indices)
-        lineFrom[i][0] = From.Old
+        lcs[i][0] = DPLink(From.Old, 0)
     for (j in new.indices)
-        lineFrom[0][j] = From.New
+        lcs[0][j] = DPLink(From.New, 0)
 
     for (i in old.indices) {
         for (j in new.indices) {
-            if (lcs[i + 1][j + 1] <= lcs[i][j + 1]) {
-                lcs[i + 1][j + 1] = lcs[i][j + 1]
-                lineFrom[i + 1][j + 1] = From.Old
+            if (lcs[i + 1][j + 1].length <= lcs[i][j + 1].length) {
+                lcs[i + 1][j + 1] = DPLink(From.Old, lcs[i][j + 1].length)
             }
-            if (lcs[i + 1][j + 1] <= lcs[i + 1][j]) {
-                lcs[i + 1][j + 1] = lcs[i + 1][j]
-                lineFrom[i + 1][j + 1] = From.New
+            if (lcs[i + 1][j + 1].length <= lcs[i + 1][j].length) {
+                lcs[i + 1][j + 1] = DPLink(From.New, lcs[i + 1][j].length)
             }
-            if (equals[i][j] and (lcs[i + 1][j + 1] < lcs[i][j] + 1)) {
-                lcs[i + 1][j + 1] = lcs[i][j] + 1
-                lineFrom[i + 1][j + 1] = From.Common
+            if ((old[i] == new[j]) and (lcs[i + 1][j + 1].length < lcs[i][j].length + 1)) {
+                lcs[i + 1][j + 1] = DPLink(From.Common, lcs[i][j].length + 1)
             }
         }
     }
 
-    return lineFrom
+    return lcs
 }
 
-fun buildDiffLinesArray(old: Array<String>, new: Array<String>, lineFrom: Array<Array<From>>): ArrayList<DiffLine> {
+fun lcsDPSpaceEfficient(old: Array<String>, new: Array<String>): IntArray {
+    var lcs: IntArray = IntArray(new.size + 1) { 0 }
+    for (i in old.indices) {
+        val lcsNew = IntArray(new.size + 1) { 0 }
+        for (j in new.indices) {
+            if (lcsNew[j + 1] <= lcs[j + 1]) {
+                lcsNew[j + 1] = lcs[j + 1]
+            }
+            if (lcsNew[j + 1] <= lcsNew[j]) {
+                lcsNew[j + 1] = lcsNew[j]
+            }
+            if ((old[i] == new[j]) and (lcsNew[j + 1] < lcs[j] + 1)) {
+                lcsNew[j + 1] = lcs[j] + 1
+            }
+        }
+        lcs = lcsNew
+    }
+    return lcs
+}
+
+fun reqLCS(old: List<String>, new: List<String>): IntArray {
+    when (old.size) {
+        0 -> return intArrayOf()
+        1 -> return if (new.contains(old.first())) intArrayOf(new.indexOf(old.first())) else intArrayOf()
+        else -> {
+            val prefLCS = lcsDPSpaceEfficient(
+                old.take(old.size / 2).toTypedArray(),
+                new.toTypedArray())
+            val suffLCS = lcsDPSpaceEfficient(
+                old.drop(old.size / 2).toTypedArray().reversedArray(),
+                new.reversed().toTypedArray()
+            ).reversedArray()
+
+            val merged = IntArray(new.size + 1) { prefLCS[it] + suffLCS[it] }
+            val split = merged.indexOf(merged.maxOrNull()?:0)
+
+            val left = reqLCS(old.take(old.size / 2), new.take(split))
+            val right = reqLCS(old.drop(old.size / 2), new.drop(split))
+            for (i in right.indices) right[i] += split
+            return left.plus(right.toList())
+        }
+    }
+}
+
+fun findCommonLinesInNew (old: Array<String>, new: Array<String>): ArrayList<Int> {
+    TODO()
+}
+
+data class DiffLine (val file: From, val content: String, val index: Int)
+
+fun buildDiffLinesArray(old: Array<String>, new: Array<String>, lineFrom: Array<Array<DPLink>>): ArrayList<DiffLine> {
     var iOld = old.size
     var iNew = new.size
 
     val diffLinesArray: ArrayList<DiffLine> = arrayListOf()
 
     while ((iOld > 0) || (iNew > 0)) {
-        when (lineFrom[iOld][iNew]) {
+        when (lineFrom[iOld][iNew].file) {
             From.Old -> {
                 iOld--
                 diffLinesArray.add(DiffLine(From.Old, old[iOld], iOld))
@@ -144,4 +178,5 @@ fun main(args: Array<String>) {
     printDiffLines(diffLinesArray)
     val changedBlocks = compressLines(diffLinesArray)
     printDiffArray(changedBlocks)
+    println(reqLCS(oldContent.toList(), newContent.toList()).contentToString())
 }
