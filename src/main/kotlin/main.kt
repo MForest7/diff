@@ -2,21 +2,43 @@ import java.io.File
 import java.nio.charset.Charset
 import kotlin.collections.ArrayList
 
+/*
+    readStringsFromFile возвращает массив, содержащий все строки файла fileName
+ */
 fun readStringsFromFile(fileName: String): Array<String> = File(fileName).readLines(Charset.defaultCharset()).toTypedArray()
 
-fun printFile(fileName: String = readLine()!!) {
-    val content = readStringsFromFile(fileName)
-    for (line in content) {
-        println(line)
-    }
-}
-
+/*
+    From - класс, значения которого соответствуют возможным файлам, содержащим принятые на вход строки
+ */
 enum class From {
     Old, New, Common, Undefined
 }
 
+/*
+    DPLink - класс, содержащий информацию о текущем состоянии ДП:
+        file - файл, содержащий последнюю строку (определяет последний переход для восстановления LCS
+        length - длина LCS
+ */
 data class DPLink(val file: From, val length: Int)
 
+/*
+    DiffLine - класс, содержащий для строки:
+        file - файл, в котором она находилась
+        content - содержание строки
+        index - номер в соответствующем файле (если file = From.Common, номер в оригинальном файле)
+ */
+data class DiffLine (val file: From, val content: String, val index: Int)
+
+/*
+    DiffLineBlock содержит подряд идущие DiffLine, сгруппированные по полю file
+ */
+data class DiffLineBlock (val file: From, val lines: ArrayList<String>, var firstIndex: Int, var lastIndex: Int)
+
+/*
+    lcsDP - реализация алгоритма поиска наибольшей общей подпослеовательности
+    https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
+    lcsDP возвращает матрицу DPLink, содержащих информацию для восстановления lcs
+ */
 fun lcsDP(old: Array<String>, new: Array<String>): Array<Array<DPLink>> {
     val lcs: Array<Array<DPLink>> = Array(old.size + 1) { Array(new.size + 1) {DPLink(From.Undefined, 0)} }
 
@@ -42,9 +64,11 @@ fun lcsDP(old: Array<String>, new: Array<String>): Array<Array<DPLink>> {
     return lcs
 }
 
-data class DiffLine (val file: From, val content: String, val index: Int)
-
-fun buildDiffLinesArray(old: Array<String>, new: Array<String>, lineFrom: Array<Array<DPLink>>): ArrayList<DiffLine> {
+/*
+    buildDiffLines восстанавливвает порядок изменений с помощью подъёма по матрице предков DPLink
+    Результат записывается в возвращаемый ArrayList<DiffLine>
+ */
+fun buildDiffLines(old: Array<String>, new: Array<String>, lineFrom: Array<Array<DPLink>>): ArrayList<DiffLine> {
     var iOld = old.size
     var iNew = new.size
 
@@ -74,13 +98,12 @@ fun buildDiffLinesArray(old: Array<String>, new: Array<String>, lineFrom: Array<
     return diffLinesArray
 }
 
-data class DiffLineBlock (val file: From, val lines: ArrayList<String>, var firstIndex: Int, var lastIndex: Int)
-
+/*
+    compressLines группирует изменения одного типа (добавление, удаление) в DiffLineBlock
+ */
 fun compressLines(linesArray: ArrayList<DiffLine>): ArrayList<DiffLineBlock> {
     val diffBlocks: ArrayList<DiffLineBlock> = ArrayList()
     var lastLineFrom = From.Undefined
-    var addedFromOld = 0
-    var addedFromNew = 0
     for (line in linesArray) {
         if (line.file == lastLineFrom) {
             diffBlocks.last().lines.add(line.content)
@@ -93,41 +116,27 @@ fun compressLines(linesArray: ArrayList<DiffLine>): ArrayList<DiffLineBlock> {
     return diffBlocks
 }
 
-fun printDiffLines(diffArray: ArrayList<DiffLine>) {
-    for ((flag, line) in diffArray)
-        println("${when (flag) {
-            From.Old -> "< "
-            From.New -> "> "
-            From.Common -> "= "
-            From.Undefined -> "UNKNOWN "
-        }        } $line")
-}
-
+/*
+    printDiffBlocksToFile записывает в файл вывод утилиты
+ */
 fun printDiffBlocksToFile(diffArray: ArrayList<DiffLineBlock>, fileName: String) {
+
     File(fileName).outputStream().bufferedWriter().use { out ->
-        var indexInOld = 1
-        var indexInNew = 1
         diffArray.forEach { block ->
             when (block.file) {
                 From.Old -> {
                     when (block.firstIndex) {
-                        block.lastIndex -> out.write("${block.firstIndex + 1}del${indexInNew}\n")
-                        else -> out.write("${block.firstIndex + 1}-${block.lastIndex + 1}del${indexInNew}\n")
+                        block.lastIndex -> out.write("del ${block.firstIndex + 1}\n")
+                        else -> out.write("del ${block.firstIndex + 1}-${block.lastIndex + 1}\n")
                     }
                     block.lines.forEach { out.write("< $it\n") }
-                    indexInOld += block.lines.size
                 }
                 From.New -> {
                     when (block.firstIndex) {
-                        block.lastIndex -> out.write("${indexInOld}add${block.firstIndex + 1}\n")
-                        else -> out.write("${indexInOld}add${block.firstIndex + 1}-${block.lastIndex + 1}\n")
+                        block.lastIndex -> out.write("add ${block.firstIndex + 1}\n")
+                        else -> out.write("add ${block.firstIndex + 1}-${block.lastIndex + 1}\n")
                     }
                     block.lines.forEach { out.write("> $it\n") }
-                    indexInNew += block.lines.size
-                }
-                From.Common -> {
-                    indexInOld += block.lines.size
-                    indexInNew += block.lines.size
                 }
                 From.Undefined -> assert(false)
             }
@@ -135,43 +144,48 @@ fun printDiffBlocksToFile(diffArray: ArrayList<DiffLineBlock>, fileName: String)
     }
 }
 
+/*
+    printDiffBlocks записывает вывод утилиты в stdout
+ */
 fun printDiffBlocks(diffArray: ArrayList<DiffLineBlock>) {
-    var indexInOld = 1
-    var indexInNew = 1
-    for (block in diffArray) {
+    diffArray.forEach { block ->
         when (block.file) {
             From.Old -> {
                 when (block.firstIndex) {
-                    block.lastIndex -> print("${block.firstIndex + 1}del${indexInNew}\n")
-                    else -> print("${block.firstIndex + 1}-${block.lastIndex + 1}del${indexInNew}\n")
+                    block.lastIndex -> print("del ${block.firstIndex + 1}\n")
+                    else -> print("del ${block.firstIndex + 1}-${block.lastIndex + 1}\n")
                 }
-                block.lines.forEach { print("< $it\n") }
-                indexInOld += block.lines.size
+                block.lines.forEach { print("\u001B[31m< $it\n\u001B[0m") }
             }
             From.New -> {
                 when (block.firstIndex) {
-                    block.lastIndex -> print("${indexInOld}add${block.firstIndex + 1}\n")
-                    else -> print("${indexInOld}add${block.firstIndex + 1}-${block.lastIndex + 1}\n")
+                    block.lastIndex -> print("add ${block.firstIndex + 1}\n")
+                    else -> print("add ${block.firstIndex + 1}-${block.lastIndex + 1}\n")
                 }
-                block.lines.forEach { print("> $it\n") }
-                indexInNew += block.lines.size
+                block.lines.forEach { print("\u001B[32m> $it\n\u001B[0m") }
             }
-            From.Common -> {
-                indexInOld += block.lines.size
-                indexInNew += block.lines.size
-            }
-            else -> continue
+            From.Undefined -> assert(false)
         }
     }
 }
 
+/*
+    buildDiffBlocks формирует посзаданным файлам вывод утилиты
+ */
 fun buildDiffBlocks(oldContent: Array<String>, newContent: Array<String>): ArrayList<DiffLineBlock> {
     val optFrom = lcsDP(oldContent, newContent)
-    val diffLinesArray = buildDiffLinesArray(oldContent, newContent, optFrom)
-    return compressLines(diffLinesArray)
+    val diffLines = buildDiffLines(oldContent, newContent, optFrom)
+    return compressLines(diffLines)
 }
 
 fun main(args: Array<String>) {
+    if (args.size < 2) {
+        print("""Неверный формат
+            | Верно ./pf-2021-diff <file_original> <file_new> <file_diff> 
+            | или /pf-2021-diff <file_original> <file_new>\n""".trimMargin())
+        assert(false)
+    }
+
     val oldContent = readStringsFromFile(args[0])
     val newContent = readStringsFromFile(args[1])
 

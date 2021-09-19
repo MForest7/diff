@@ -95,7 +95,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testDP() {
+    fun testDP1() {
         checkDP(
             lcsDP(
                 arrayOf("a", "a", "b", "a"),
@@ -108,7 +108,10 @@ internal class Test1 {
                 arrayOf(DPLink(From.Old, 0), DPLink(From.Old, 1), DPLink(From.Common, 2), DPLink(From.New, 2), DPLink(From.Common, 3)),
                 arrayOf(DPLink(From.Old, 0), DPLink(From.Common, 1), DPLink(From.Old, 2), DPLink(From.Common, 3), DPLink(From.New, 3))
             ))
+    }
 
+    @Test
+    fun testDP2() {
         checkDP(
             lcsDP(
                 arrayOf("a","c","c"),
@@ -120,24 +123,30 @@ internal class Test1 {
                 arrayOf(DPLink(From.Old, 0),DPLink(From.Old, 1),DPLink(From.New, 1),DPLink(From.New, 1),DPLink(From.Common, 2)),
                 arrayOf(DPLink(From.Old, 0),DPLink(From.Old, 1),DPLink(From.New, 1),DPLink(From.New, 1),DPLink(From.Common, 2))
             ))
+    }
 
+    @Test
+    fun testDP3() {
         checkDP(
             lcsDP(
-                arrayOf("a","c","a","c","b","a","a","b"),
+                arrayOf("a", "c", "a", "c", "b", "a", "a", "b"),
                 arrayOf("a")
             ),
             arrayOf(
-                arrayOf(DPLink(From.Undefined, 0),DPLink(From.New, 0)),
-                arrayOf(DPLink(From.Old, 0),DPLink(From.Common, 1)),
-                arrayOf(DPLink(From.Old, 0),DPLink(From.Old, 1)),
-                arrayOf(DPLink(From.Old, 0),DPLink(From.Common, 1)),
-                arrayOf(DPLink(From.Old, 0),DPLink(From.Old, 1)),
-                arrayOf(DPLink(From.Old, 0),DPLink(From.Old, 1)),
-                arrayOf(DPLink(From.Old, 0),DPLink(From.Common, 1)),
-                arrayOf(DPLink(From.Old, 0),DPLink(From.Common, 1)),
-                arrayOf(DPLink(From.Old, 0),DPLink(From.Old, 1))
+                arrayOf(DPLink(From.Undefined, 0), DPLink(From.New, 0)),
+                arrayOf(DPLink(From.Old, 0), DPLink(From.Common, 1)),
+                arrayOf(DPLink(From.Old, 0), DPLink(From.Old, 1)),
+                arrayOf(DPLink(From.Old, 0), DPLink(From.Common, 1)),
+                arrayOf(DPLink(From.Old, 0), DPLink(From.Old, 1)),
+                arrayOf(DPLink(From.Old, 0), DPLink(From.Old, 1)),
+                arrayOf(DPLink(From.Old, 0), DPLink(From.Common, 1)),
+                arrayOf(DPLink(From.Old, 0), DPLink(From.Common, 1)),
+                arrayOf(DPLink(From.Old, 0), DPLink(From.Old, 1))
             ))
+    }
 
+    @Test
+    fun testDP4() {
         checkDP(
             lcsDP(
                 arrayOf("c"),
@@ -147,7 +156,10 @@ internal class Test1 {
                 arrayOf(DPLink(From.Undefined, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.New, 0)),
                 arrayOf(DPLink(From.Old, 0),DPLink(From.New, 0),DPLink(From.Common, 1),DPLink(From.New, 1),DPLink(From.New, 1),DPLink(From.Common, 1),DPLink(From.New, 1))
             ))
+    }
 
+    @Test
+    fun testDP5() {
         checkDP(
             lcsDP(
                 arrayOf("a","a","a"),
@@ -159,8 +171,10 @@ internal class Test1 {
                 arrayOf(DPLink(From.Old, 0),DPLink(From.Common, 1),DPLink(From.Common, 2),DPLink(From.Common, 2)),
                 arrayOf(DPLink(From.Old, 0),DPLink(From.Common, 1),DPLink(From.Common, 2),DPLink(From.Common, 3))
             ))
+    }
 
-
+    @Test
+    fun testDP6() {
         checkDP(
             lcsDP(
                 arrayOf("ab", "bc", "abc", "ba", "bc"),
@@ -174,11 +188,14 @@ internal class Test1 {
                 arrayOf(DPLink(From.Old, 0),DPLink(From.Old, 1),DPLink(From.New, 1),DPLink(From.New, 1),DPLink(From.New, 1)),
                 arrayOf(DPLink(From.Old, 0),DPLink(From.Common, 1),DPLink(From.New, 1),DPLink(From.New, 1),DPLink(From.Common, 2))
             ))
+    }
 
+    @Test
+    fun testDP7() {
         checkDP(
             lcsDP(
-                arrayOf("&^#", " _ ", "&", "%№ё", "300$", "", "День недели - суббота"),
-                arrayOf("&", "300$", "&^#", "День недели - суббота")
+                arrayOf("&^#", " _ ", "k", "%№ё", "300$", "", "День недели - суббота"),
+                arrayOf("K", "300$", "&^#", "День недели - суббота")
             ),
             arrayOf(
                 arrayOf(DPLink(From.Undefined, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.New, 0)),
@@ -193,99 +210,228 @@ internal class Test1 {
     }
 
     @Test
-    fun testDiffLines() {
-        var old = arrayOf("a", "a", "b", "a")
-        var new = arrayOf("a", "b", "a", "b")
-        var lineFrom = lcsDP(old, new)
-        checkDiffLines(old, new, buildDiffLinesArray(old, new, lineFrom))
-
-        old =arrayOf("a","c","c")
-        new = arrayOf("a","b","d","c")
-        lineFrom = lcsDP(old, new)
-        checkDiffLines(old, new, buildDiffLinesArray(old, new, lineFrom))
-
-        old = arrayOf("a","c","a","c","b","a","a","b")
-        new = arrayOf("a")
-        lineFrom = lcsDP(old, new)
-        checkDiffLines(old, new, buildDiffLinesArray(old, new, lineFrom))
-
-        old = arrayOf("c")
-        new = arrayOf("b","c","b","a","c","a")
-        lineFrom = lcsDP(old, new)
-        checkDiffLines(old, new, buildDiffLinesArray(old, new, lineFrom))
-
-        old = arrayOf("a","a","a")
-        new = arrayOf("a","a","a")
-        lineFrom = lcsDP(old, new)
-        checkDiffLines(old, new, buildDiffLinesArray(old, new, lineFrom))
-
-        old = arrayOf("ab", "bc", "abc", "ba", "bc")
-        new = arrayOf("bc", "ac", "acb", "bc")
-        lineFrom = lcsDP(old, new)
-        checkDiffLines(old, new, buildDiffLinesArray(old, new, lineFrom))
-
-        old = arrayOf("&^#", " _ ", "&", "%№ё", "300$", "", "День недели - суббота")
-        new = arrayOf("&", "300$", "&^#", "День недели - суббота")
-        lineFrom = lcsDP(old, new)
-        checkDiffLines(old, new, buildDiffLinesArray(old, new, lineFrom))
+    fun testDiffLines1() {
+        val old = arrayOf("a", "a", "b", "a")
+        val new = arrayOf("a", "b", "a", "b")
+        val lineFrom = lcsDP(old, new)
+        checkDiffLines(old, new, buildDiffLines(old, new, lineFrom))
     }
 
     @Test
-    fun testCompressLines() {
-        var old = arrayOf("a", "a", "b", "a")
-        var new = arrayOf("a", "b", "a", "b")
-        var lineFrom = lcsDP(old, new)
-        var diffLines = buildDiffLinesArray(old, new, lineFrom)
-        checkCompressLines(diffLines, compressLines(diffLines))
+    fun testDiffLines2() {
+        val old = arrayOf("a", "c", "c")
+        val new = arrayOf("a", "b", "d", "c")
+        val lineFrom = lcsDP(old, new)
+        checkDiffLines(old, new, buildDiffLines(old, new, lineFrom))
+    }
 
-        old =arrayOf("a","c","c")
-        new = arrayOf("a","b","d","c")
-        lineFrom = lcsDP(old, new)
-        diffLines = buildDiffLinesArray(old, new, lineFrom)
-        checkCompressLines(diffLines, compressLines(diffLines))
+    @Test
+    fun testDiffLines3() {
+        val old = arrayOf("a", "c", "a", "c", "b", "a", "a", "b")
+        val new = arrayOf("a")
+        val lineFrom = lcsDP(old, new)
+        checkDiffLines(old, new, buildDiffLines(old, new, lineFrom))
+    }
 
-        old = arrayOf("a","c","a","c","b","a","a","b")
-        new = arrayOf("a")
-        lineFrom = lcsDP(old, new)
-        diffLines = buildDiffLinesArray(old, new, lineFrom)
-        checkCompressLines(diffLines, compressLines(diffLines))
+    @Test
+    fun testDiffLines4() {
+        val old = arrayOf("c")
+        val new = arrayOf("b", "c", "b", "a", "c", "a")
+        val lineFrom = lcsDP(old, new)
+        checkDiffLines(old, new, buildDiffLines(old, new, lineFrom))
+    }
 
-        old = arrayOf("c")
-        new = arrayOf("b","c","b","a","c","a")
-        lineFrom = lcsDP(old, new)
-        diffLines = buildDiffLinesArray(old, new, lineFrom)
-        checkCompressLines(diffLines, compressLines(diffLines))
+    @Test
+    fun testDiffLines5() {
+        val old = arrayOf("a", "a", "a")
+        val new = arrayOf("a", "a", "a")
+        val lineFrom = lcsDP(old, new)
+        checkDiffLines(old, new, buildDiffLines(old, new, lineFrom))
+    }
 
-        old = arrayOf("a","a","a")
-        new = arrayOf("a","a","a")
-        lineFrom = lcsDP(old, new)
-        diffLines = buildDiffLinesArray(old, new, lineFrom)
-        checkCompressLines(diffLines, compressLines(diffLines))
+    @Test
+    fun testDiffLines6() {
+        val old = arrayOf("ab", "bc", "abc", "ba", "bc")
+        val new = arrayOf("bc", "ac", "acb", "bc")
+        val lineFrom = lcsDP(old, new)
+        checkDiffLines(old, new, buildDiffLines(old, new, lineFrom))
+    }
 
-        old = arrayOf("ab", "bc", "abc", "ba", "bc")
-        new = arrayOf("bc", "ac", "acb", "bc")
-        lineFrom = lcsDP(old, new)
-        diffLines = buildDiffLinesArray(old, new, lineFrom)
-        checkCompressLines(diffLines, compressLines(diffLines))
+    @Test
+    fun testDiffLines7() {
+        val old = arrayOf("&^#", " _ ", "k", "%№ё", "300$", "", "День недели - суббота")
+        val new = arrayOf("K", "300$", "&^#", "День недели - суббота")
+        val lineFrom = lcsDP(old, new)
+        checkDiffLines(old, new, buildDiffLines(old, new, lineFrom))
+    }
 
-        old = arrayOf("&^#", " _ ", "&", "%№ё", "300$", "", "День недели - суббота")
-        new = arrayOf("&", "300$", "&^#", "День недели - суббота")
-        lineFrom = lcsDP(old, new)
-        diffLines = buildDiffLinesArray(old, new, lineFrom)
+    @Test
+    fun testCompressLines1() {
+        val old = arrayOf("a", "a", "b", "a")
+        val new = arrayOf("a", "b", "a", "b")
+        val lineFrom = lcsDP(old, new)
+        val diffLines = buildDiffLines(old, new, lineFrom)
         checkCompressLines(diffLines, compressLines(diffLines))
     }
 
     @Test
-    fun testProject() {
-        var old = arrayOf("a", "a", "b", "a")
-        var new = arrayOf("a", "b", "a", "b")
-        var ans = arrayOf(
-            "1del1",
+    fun testCompressLines2() {
+        val old = arrayOf("a", "c", "c")
+        val new = arrayOf("a", "b", "d", "c")
+        val lineFrom = lcsDP(old, new)
+        val diffLines = buildDiffLines(old, new, lineFrom)
+        checkCompressLines(diffLines, compressLines(diffLines))
+    }
+
+    @Test
+    fun testCompressLines3() {
+        val old = arrayOf("a", "c", "a", "c", "b", "a", "a", "b")
+        val new = arrayOf("a")
+        val lineFrom = lcsDP(old, new)
+        val diffLines = buildDiffLines(old, new, lineFrom)
+        checkCompressLines(diffLines, compressLines(diffLines))
+    }
+
+    @Test
+    fun testCompressLines4() {
+        val old = arrayOf("c")
+        val new = arrayOf("b", "c", "b", "a", "c", "a")
+        val lineFrom = lcsDP(old, new)
+        val diffLines = buildDiffLines(old, new, lineFrom)
+        checkCompressLines(diffLines, compressLines(diffLines))
+    }
+
+    @Test
+    fun testCompressLines5() {
+        val old = arrayOf("a", "a", "a")
+        val new = arrayOf("a", "a", "a")
+        val lineFrom = lcsDP(old, new)
+        val diffLines = buildDiffLines(old, new, lineFrom)
+        checkCompressLines(diffLines, compressLines(diffLines))
+    }
+
+    @Test
+    fun testCompressLines6() {
+        val old = arrayOf("ab", "bc", "abc", "ba", "bc")
+        val new = arrayOf("bc", "ac", "acb", "bc")
+        val lineFrom = lcsDP(old, new)
+        val diffLines = buildDiffLines(old, new, lineFrom)
+        checkCompressLines(diffLines, compressLines(diffLines))
+    }
+
+    @Test
+    fun testCompressLines7() {
+        val old = arrayOf("&^#", " _ ", "k", "%№ё", "300$", "", "День недели - суббота")
+        val new = arrayOf("K", "300$", "&^#", "День недели - суббота")
+        val lineFrom = lcsDP(old, new)
+        val diffLines = buildDiffLines(old, new, lineFrom)
+        checkCompressLines(diffLines, compressLines(diffLines))
+    }
+
+    @Test
+    fun testProject1() {
+        val old = arrayOf("a", "a", "b", "a")
+        val new = arrayOf("a", "b", "a", "b")
+        val ans = arrayOf(
+            "del 1",
             "< a",
-            "5add4",
+            "add 4",
             "> b"
         )
+        checkMain(old, new, ans)
+    }
 
+
+    @Test
+    fun testProject2() {
+        val old = arrayOf("a", "c", "c")
+        val new = arrayOf("a", "b", "d", "c")
+        val ans = arrayOf(
+            "del 2",
+            "< c",
+            "add 2-3",
+            "> b",
+            "> d"
+        )
+        checkMain(old, new, ans)
+    }
+
+    @Test
+    fun testProject3() {
+        val old = arrayOf("a", "c", "a", "c", "b", "a", "a", "b")
+        val new = arrayOf("a")
+        val ans = arrayOf(
+            "del 1-6",
+            "< a",
+            "< c",
+            "< a",
+            "< c",
+            "< b",
+            "< a",
+            "del 8",
+            "< b"
+        )
+        checkMain(old, new, ans)
+    }
+
+    @Test
+    fun testProject4() {
+        val old = arrayOf("c")
+        val new = arrayOf("b", "c", "b", "a", "c", "a")
+        val ans = arrayOf(
+            "add 1-4",
+            "> b",
+            "> c",
+            "> b",
+            "> a",
+            "add 6",
+            "> a"
+        )
+        checkMain(old, new, ans)
+    }
+
+    @Test
+    fun testProject5() {
+        val old = arrayOf("a", "a", "a")
+        val new = arrayOf("a", "a", "a")
+        val ans = emptyArray<String>()
+        checkMain(old, new, ans)
+    }
+
+    @Test
+    fun testProject6() {
+        val old = arrayOf("ab", "bc", "abc", "ba", "bc")
+        val new = arrayOf("bc", "ac", "acb", "bc")
+        val ans = arrayOf(
+            "del 1",
+            "< ab",
+            "del 3-4",
+            "< abc",
+            "< ba",
+            "add 2-3",
+            "> ac",
+            "> acb"
+        )
+        checkMain(old, new, ans)
+    }
+
+    @Test
+    fun testProject7() {
+        val old = arrayOf("&^#", " _ ", "k", "%№ё", "300$", "", "День недели - суббота")
+        val new = arrayOf("K", "300$", "&^#", "День недели - суббота")
+        val ans = arrayOf(
+            "del 1-4",
+            "< &^#",
+            "<  _ ",
+            "< k",
+            "< %№ё",
+            "add 1",
+            "> K",
+            "del 6",
+            "< ",
+            "add 3",
+            "> &^#"
+        )
         checkMain(old, new, ans)
     }
 }
