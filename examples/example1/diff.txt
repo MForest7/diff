@@ -1,0 +1,30 @@
+del 36-37
+<
+< int par[N], ranc[N];
+del 39
+< int init(int n) {
+add 37-38
+> int par[N];
+> void init_dsu(int n) {
+del 41
+<         par[i] = i, ranc[i] = i;
+add 40
+>         par[i] = i;
+del 60
+<     vi p(m); iota(all(p), 0);
+add 59-62
+>     vi p(m);
+>     for (int i = 0; i < m; i++)
+>         p[i] = i;
+>
+del 62
+<         if (w[i] == w[j])
+add 64
+>         if (w[i] + lambda * capital(i) == w[j] + lambda * capital(j))
+del 67
+<     init(n);
+add 69
+>     init_dsu(n);
+add 99-100
+>         //cout << "la = " << la << endl;
+>         //cout << " y = " << build(n, m, la, u, k) << endl;

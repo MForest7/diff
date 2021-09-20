@@ -95,7 +95,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testDP1() {
+    fun testDPOnlyLetters() {
         checkDP(
             lcsDP(
                 arrayOf("a", "a", "b", "a"),
@@ -111,7 +111,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testDP2() {
+    fun testDPDifferentLength() {
         checkDP(
             lcsDP(
                 arrayOf("a","c","c"),
@@ -126,7 +126,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testDP3() {
+    fun testDPOnlyDel() {
         checkDP(
             lcsDP(
                 arrayOf("a", "c", "a", "c", "b", "a", "a", "b"),
@@ -146,7 +146,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testDP4() {
+    fun testDPOnlyAdd() {
         checkDP(
             lcsDP(
                 arrayOf("c"),
@@ -159,7 +159,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testDP5() {
+    fun testDPEqualStrings() {
         checkDP(
             lcsDP(
                 arrayOf("a","a","a"),
@@ -174,7 +174,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testDP6() {
+    fun testDPWords() {
         checkDP(
             lcsDP(
                 arrayOf("ab", "bc", "abc", "ba", "bc"),
@@ -191,7 +191,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testDP7() {
+    fun testDPRandomCharacters() {
         checkDP(
             lcsDP(
                 arrayOf("&^#", " _ ", "k", "%№ё", "300$", "", "День недели - суббота"),
@@ -210,7 +210,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testDiffLines1() {
+    fun testDiffLinesOnlyLetters() {
         val old = arrayOf("a", "a", "b", "a")
         val new = arrayOf("a", "b", "a", "b")
         val lineFrom = lcsDP(old, new)
@@ -218,7 +218,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testDiffLines2() {
+    fun testDiffLinesDifferentLength() {
         val old = arrayOf("a", "c", "c")
         val new = arrayOf("a", "b", "d", "c")
         val lineFrom = lcsDP(old, new)
@@ -226,7 +226,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testDiffLines3() {
+    fun testDiffLinesOnlyDel() {
         val old = arrayOf("a", "c", "a", "c", "b", "a", "a", "b")
         val new = arrayOf("a")
         val lineFrom = lcsDP(old, new)
@@ -234,7 +234,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testDiffLines4() {
+    fun testDiffLinesOnlyAdd() {
         val old = arrayOf("c")
         val new = arrayOf("b", "c", "b", "a", "c", "a")
         val lineFrom = lcsDP(old, new)
@@ -242,7 +242,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testDiffLines5() {
+    fun testDiffLinesEqualStrings() {
         val old = arrayOf("a", "a", "a")
         val new = arrayOf("a", "a", "a")
         val lineFrom = lcsDP(old, new)
@@ -250,7 +250,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testDiffLines6() {
+    fun testDiffLinesWords() {
         val old = arrayOf("ab", "bc", "abc", "ba", "bc")
         val new = arrayOf("bc", "ac", "acb", "bc")
         val lineFrom = lcsDP(old, new)
@@ -258,7 +258,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testDiffLines7() {
+    fun testDiffLinesRandomCharacters() {
         val old = arrayOf("&^#", " _ ", "k", "%№ё", "300$", "", "День недели - суббота")
         val new = arrayOf("K", "300$", "&^#", "День недели - суббота")
         val lineFrom = lcsDP(old, new)
@@ -266,7 +266,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testCompressLines1() {
+    fun testCompressLinesOnlyLetters() {
         val old = arrayOf("a", "a", "b", "a")
         val new = arrayOf("a", "b", "a", "b")
         val lineFrom = lcsDP(old, new)
@@ -275,7 +275,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testCompressLines2() {
+    fun testCompressLinesDifferentLength() {
         val old = arrayOf("a", "c", "c")
         val new = arrayOf("a", "b", "d", "c")
         val lineFrom = lcsDP(old, new)
@@ -284,7 +284,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testCompressLines3() {
+    fun testCompressLinesOnlyDel() {
         val old = arrayOf("a", "c", "a", "c", "b", "a", "a", "b")
         val new = arrayOf("a")
         val lineFrom = lcsDP(old, new)
@@ -293,7 +293,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testCompressLines4() {
+    fun testCompressLinesOnlyAdd() {
         val old = arrayOf("c")
         val new = arrayOf("b", "c", "b", "a", "c", "a")
         val lineFrom = lcsDP(old, new)
@@ -302,7 +302,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testCompressLines5() {
+    fun testCompressLinesEqualStrings() {
         val old = arrayOf("a", "a", "a")
         val new = arrayOf("a", "a", "a")
         val lineFrom = lcsDP(old, new)
@@ -311,7 +311,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testCompressLines6() {
+    fun testCompressLinesWords() {
         val old = arrayOf("ab", "bc", "abc", "ba", "bc")
         val new = arrayOf("bc", "ac", "acb", "bc")
         val lineFrom = lcsDP(old, new)
@@ -320,7 +320,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testCompressLines7() {
+    fun testCompressLinesRandomSymbols() {
         val old = arrayOf("&^#", " _ ", "k", "%№ё", "300$", "", "День недели - суббота")
         val new = arrayOf("K", "300$", "&^#", "День недели - суббота")
         val lineFrom = lcsDP(old, new)
@@ -329,7 +329,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testProject1() {
+    fun testProjectOnlyLetters() {
         val old = arrayOf("a", "a", "b", "a")
         val new = arrayOf("a", "b", "a", "b")
         val ans = arrayOf(
@@ -343,7 +343,7 @@ internal class Test1 {
 
 
     @Test
-    fun testProject2() {
+    fun testProjectDifferentLength() {
         val old = arrayOf("a", "c", "c")
         val new = arrayOf("a", "b", "d", "c")
         val ans = arrayOf(
@@ -357,7 +357,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testProject3() {
+    fun testProjectOnlyDel() {
         val old = arrayOf("a", "c", "a", "c", "b", "a", "a", "b")
         val new = arrayOf("a")
         val ans = arrayOf(
@@ -375,7 +375,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testProject4() {
+    fun testProjectOnlyAdd() {
         val old = arrayOf("c")
         val new = arrayOf("b", "c", "b", "a", "c", "a")
         val ans = arrayOf(
@@ -391,7 +391,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testProject5() {
+    fun testProjectEqualStrings() {
         val old = arrayOf("a", "a", "a")
         val new = arrayOf("a", "a", "a")
         val ans = emptyArray<String>()
@@ -399,7 +399,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testProject6() {
+    fun testProjectWords() {
         val old = arrayOf("ab", "bc", "abc", "ba", "bc")
         val new = arrayOf("bc", "ac", "acb", "bc")
         val ans = arrayOf(
@@ -416,7 +416,7 @@ internal class Test1 {
     }
 
     @Test
-    fun testProject7() {
+    fun testProjectRandomCharacters() {
         val old = arrayOf("&^#", " _ ", "k", "%№ё", "300$", "", "День недели - суббота")
         val new = arrayOf("K", "300$", "&^#", "День недели - суббота")
         val ans = arrayOf(

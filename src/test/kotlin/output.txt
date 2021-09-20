@@ -1,11 +1,8 @@
-del 1-4
-< &^#
-<  _ 
-< k
-< %№ё
-add 1
-> K
-del 6
-< 
-add 3
-> &^#
+del 1
+< ab
+del 3-4
+< abc
+< ba
+add 2-3
+> ac
+> acb
