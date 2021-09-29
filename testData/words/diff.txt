@@ -1,0 +1,8 @@
+del 1
+< ab
+del 3-4
+< abc
+< ba
+add 2-3
+> ac
+> acb

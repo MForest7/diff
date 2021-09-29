@@ -2,26 +2,27 @@ import java.io.File
 import java.nio.charset.Charset
 import kotlin.collections.ArrayList
 
-/*
+/**
     readStringsFromFile возвращает массив, содержащий все строки файла fileName
  */
+
 fun readStringsFromFile(fileName: String): Array<String> = File(fileName).readLines(Charset.defaultCharset()).toTypedArray()
 
-/*
+/**
     From - класс, значения которого соответствуют возможным файлам, содержащим принятые на вход строки
  */
 enum class From {
     Old, New, Common, Undefined
 }
 
-/*
+/**
     DPLink - класс, содержащий информацию о текущем состоянии ДП:
         file - файл, содержащий последнюю строку (определяет последний переход для восстановления LCS
         length - длина LCS
  */
 data class DPLink(val file: From, val length: Int)
 
-/*
+/**
     DiffLine - класс, содержащий для строки:
         file - файл, в котором она находилась
         content - содержание строки
@@ -29,12 +30,12 @@ data class DPLink(val file: From, val length: Int)
  */
 data class DiffLine (val file: From, val content: String, val index: Int)
 
-/*
+/**
     DiffLineBlock содержит подряд идущие DiffLine, сгруппированные по полю file
  */
 data class DiffLineBlock (val file: From, val lines: ArrayList<String>, var firstIndex: Int, var lastIndex: Int)
 
-/*
+/**
     lcsDP - реализация алгоритма поиска наибольшей общей подпослеовательности
     https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
     lcsDP возвращает матрицу DPLink, содержащих информацию для восстановления lcs
@@ -64,7 +65,7 @@ fun lcsDP(old: Array<String>, new: Array<String>): Array<Array<DPLink>> {
     return lcs
 }
 
-/*
+/**
     buildDiffLines восстанавливвает порядок изменений с помощью подъёма по матрице предков DPLink
     Результат записывается в возвращаемый ArrayList<DiffLine>
  */
@@ -98,7 +99,7 @@ fun buildDiffLines(old: Array<String>, new: Array<String>, lineFrom: Array<Array
     return diffLinesArray
 }
 
-/*
+/**
     compressLines группирует изменения одного типа (добавление, удаление) в DiffLineBlock
  */
 fun compressLines(linesArray: ArrayList<DiffLine>): ArrayList<DiffLineBlock> {
@@ -116,7 +117,7 @@ fun compressLines(linesArray: ArrayList<DiffLine>): ArrayList<DiffLineBlock> {
     return diffBlocks
 }
 
-/*
+/**
     printDiffBlocksToFile записывает в файл вывод утилиты
  */
 fun printDiffBlocksToFile(diffArray: ArrayList<DiffLineBlock>, fileName: String) {
@@ -138,13 +139,14 @@ fun printDiffBlocksToFile(diffArray: ArrayList<DiffLineBlock>, fileName: String)
                     }
                     block.lines.forEach { out.write("> $it\n") }
                 }
+                From.Common -> assert(true)
                 From.Undefined -> assert(false)
             }
         }
     }
 }
 
-/*
+/**
     printDiffBlocks записывает вывод утилиты в stdout
  */
 fun printDiffBlocks(diffArray: ArrayList<DiffLineBlock>) {
@@ -164,18 +166,79 @@ fun printDiffBlocks(diffArray: ArrayList<DiffLineBlock>) {
                 }
                 block.lines.forEach { print("\u001B[32m> $it\n\u001B[0m") }
             }
+            From.Common -> assert(true)
             From.Undefined -> assert(false)
         }
     }
 }
 
-/*
+/**
     buildDiffBlocks формирует посзаданным файлам вывод утилиты
  */
 fun buildDiffBlocks(oldContent: Array<String>, newContent: Array<String>): ArrayList<DiffLineBlock> {
     val optFrom = lcsDP(oldContent, newContent)
     val diffLines = buildDiffLines(oldContent, newContent, optFrom)
     return compressLines(diffLines)
+}
+
+fun outTest() {
+    val old = arrayOf("&^#", " _ ", "k", "%№ё", "300$", "", "День недели - суббота")
+    val new = arrayOf("K", "300$", "&^#", "День недели - суббота")
+    val ans = arrayOf(
+        "del 1-4",
+        "< &^#",
+        "<  _ ",
+        "< k",
+        "< %№ё",
+        "add 1",
+        "> K",
+        "del 6",
+        "< ",
+        "add 3",
+        "> &^#"
+    )
+
+    val arr = arrayOf(
+        arrayOf(DPLink(From.Undefined, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.New, 0)),
+        arrayOf(DPLink(From.Old, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.Common, 1),DPLink(From.New, 1)),
+        arrayOf(DPLink(From.Old, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.Old, 1),DPLink(From.New, 1)),
+        arrayOf(DPLink(From.Old, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.Old, 1),DPLink(From.New, 1)),
+        arrayOf(DPLink(From.Old, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.Old, 1),DPLink(From.New, 1)),
+        arrayOf(DPLink(From.Old, 0),DPLink(From.New, 0),DPLink(From.Common, 1),DPLink(From.New, 1),DPLink(From.New, 1)),
+        arrayOf(DPLink(From.Old, 0),DPLink(From.New, 0),DPLink(From.Old, 1),DPLink(From.New, 1),DPLink(From.New, 1)),
+        arrayOf(DPLink(From.Old, 0),DPLink(From.New, 0),DPLink(From.Old, 1),DPLink(From.New, 1),DPLink(From.Common, 2))
+    )
+
+    val dir = "testData/randomCharacters/"
+
+    File("${dir}dp.txt").bufferedWriter().use { out ->
+        arr.forEach { line ->
+            line.forEach {
+                out.write("${it.file} ")
+            }
+            out.write("\n")
+            line.forEach {
+                out.write("${it.length} ")
+            }
+            out.write("\n")
+        }
+    }
+
+    File("${dir}old.txt").bufferedWriter().use { out ->
+        old.forEach {
+            out.write("$it\n")
+        }
+    }
+    File("${dir}new.txt").bufferedWriter().use { out ->
+        new.forEach {
+            out.write("$it\n")
+        }
+    }
+    File("${dir}diff.txt").bufferedWriter().use { out ->
+        ans.forEach {
+            out.write("$it\n")
+        }
+    }
 }
 
 fun main(args: Array<String>) {

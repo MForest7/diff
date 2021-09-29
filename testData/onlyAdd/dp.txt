@@ -1,0 +1,4 @@
+Undefined New New New New New New 
+0 0 0 0 0 0 0 
+Old New Common New New Common New 
+0 0 1 1 1 1 1 
