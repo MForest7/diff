@@ -181,66 +181,6 @@ fun buildDiffBlocks(oldContent: Array<String>, newContent: Array<String>): Array
     return compressLines(diffLines)
 }
 
-fun outTest() {
-    val old = arrayOf("&^#", " _ ", "k", "%№ё", "300$", "", "День недели - суббота")
-    val new = arrayOf("K", "300$", "&^#", "День недели - суббота")
-    val ans = arrayOf(
-        "del 1-4",
-        "< &^#",
-        "<  _ ",
-        "< k",
-        "< %№ё",
-        "add 1",
-        "> K",
-        "del 6",
-        "< ",
-        "add 3",
-        "> &^#"
-    )
-
-    val arr = arrayOf(
-        arrayOf(DPLink(From.Undefined, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.New, 0)),
-        arrayOf(DPLink(From.Old, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.Common, 1),DPLink(From.New, 1)),
-        arrayOf(DPLink(From.Old, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.Old, 1),DPLink(From.New, 1)),
-        arrayOf(DPLink(From.Old, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.Old, 1),DPLink(From.New, 1)),
-        arrayOf(DPLink(From.Old, 0),DPLink(From.New, 0),DPLink(From.New, 0),DPLink(From.Old, 1),DPLink(From.New, 1)),
-        arrayOf(DPLink(From.Old, 0),DPLink(From.New, 0),DPLink(From.Common, 1),DPLink(From.New, 1),DPLink(From.New, 1)),
-        arrayOf(DPLink(From.Old, 0),DPLink(From.New, 0),DPLink(From.Old, 1),DPLink(From.New, 1),DPLink(From.New, 1)),
-        arrayOf(DPLink(From.Old, 0),DPLink(From.New, 0),DPLink(From.Old, 1),DPLink(From.New, 1),DPLink(From.Common, 2))
-    )
-
-    val dir = "testData/randomCharacters/"
-
-    File("${dir}dp.txt").bufferedWriter().use { out ->
-        arr.forEach { line ->
-            line.forEach {
-                out.write("${it.file} ")
-            }
-            out.write("\n")
-            line.forEach {
-                out.write("${it.length} ")
-            }
-            out.write("\n")
-        }
-    }
-
-    File("${dir}old.txt").bufferedWriter().use { out ->
-        old.forEach {
-            out.write("$it\n")
-        }
-    }
-    File("${dir}new.txt").bufferedWriter().use { out ->
-        new.forEach {
-            out.write("$it\n")
-        }
-    }
-    File("${dir}diff.txt").bufferedWriter().use { out ->
-        ans.forEach {
-            out.write("$it\n")
-        }
-    }
-}
-
 fun main(args: Array<String>) {
     if (args.size < 2) {
         print("""Неверный формат
